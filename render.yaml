@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: workeu
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: npm test
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: TRUST_PROXY
+        value: "true"
+      - key: ARBEITNOW_ENABLED
+        value: "true"
+      - key: ADZUNA_APP_ID
+        sync: false
+      - key: ADZUNA_APP_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false        # optional: enables AI translation in "I don't understand"

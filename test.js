@@ -1,0 +1,14 @@
+const assert=require('node:assert'),s=require('./server.js');
+const ba=s.baMap({refnr:'10001-123-S',titel:'Kommissionierer (m/w/d)',arbeitgeber:'LogiPro GmbH',arbeitsort:{ort:'München'},aktuelleVeroeffentlichungsdatum:'2026-10-01',eintrittsdatum:'2026-11-01'});
+assert.equal(ba.id,'ba:10001-123-S');assert.equal(ba.sourceUrl,'https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-123-S');
+assert.equal(ba.wage,null);assert.equal(ba.germanLevel,null);assert.equal(ba.accommodation,null);assert.equal(ba.shifts,null);
+const d=s.baDetail({stellenbeschreibung:'<p>Deutschkenntnisse A2 erforderlich. Unterkunft wird gestellt. Schichtarbeit.</p>',verguetung:'nach Tarif'});
+assert.equal(d.germanLevel,'A2');assert.equal(d.accommodation,true);assert.equal(d.shifts,'Shift work');assert.equal(d.salaryText,'nach Tarif');
+const none=s.baDetail({stellenbeschreibung:'Wir suchen Verstärkung.'});assert.equal(none.germanLevel,null);assert.equal(none.accommodation,null);assert.equal(none.shifts,null);
+const az=s.adzMap({id:7,title:'Lagerhelfer',company:{display_name:'X'},location:{display_name:'Wien'},salary_min:30000,salary_max:34000,salary_is_predicted:'1',redirect_url:'https://www.adzuna.at/x',created:'2026-10-02T00:00:00Z'},'at');
+assert.equal(az.salaryText,null);assert.equal(az.country,'Austria');
+const az2=s.adzMap({id:8,title:'T',redirect_url:'http://evil',salary_min:30000,salary_max:34000,salary_is_predicted:'0'},'de');assert.equal(az2.sourceUrl,null);assert.match(az2.salaryText,/30000/);
+const an=s.anMap({slug:'a',title:'Fahrer',company_name:'Y',location:'Berlin',url:'https://www.arbeitnow.com/jobs/a',created_at:1790000000,job_types:['full_time'],description:'<b>hi</b>'});assert.equal(an.country,null);
+const dd=s.dedupe([ba,s.baMap({refnr:'2',titel:'Kommissionierer',arbeitgeber:'LogiPro GmbH',arbeitsort:{ort:'München'}})]);assert.equal(dd.length,1);
+assert.equal(s.baDetail({stellenbeschreibung:'Bewerbung an jobs@firma.de bitte.'}).contactEmail,'jobs@firma.de');assert.equal(s.baDetail({stellenbeschreibung:'Kontakt: noreply@firma.de'}).contactEmail,null);assert.equal(none.contactEmail,null);
+console.log('all tests passed');
