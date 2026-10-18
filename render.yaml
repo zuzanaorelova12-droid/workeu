@@ -3,7 +3,7 @@ services:
     name: workeu
     runtime: node
     region: frankfurt
-    plan: starter
+    plan: free
     buildCommand: npm test
     startCommand: npm start
     healthCheckPath: /api/health
